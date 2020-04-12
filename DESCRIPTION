@@ -1,0 +1,17 @@
+Package: Covid19CasesPlot
+Type: Package
+Title: Plot COVID19 Patterns Using Data from John Hopkins University
+Version: 1.0
+Date: 2020-04-12
+Author: Damiano Fantini
+Maintainer: Damiano Fantini <damiano.fantini@gmail.com>
+Description: Retrieve latest COVID-19 data provided by John Hopkins University (Baltimore, US) and visualize the trend of new cases and deaths due to COVID-19 infection in a country or US state of interest. Points indicate the number of new cases or deaths measured day by day. Trendlines are computed by LOESS.
+License: GPL-2
+Depends: R (>= 3.5)
+Imports: stats, ggplot2, utils, reshape2
+Suggests: dplyr, gridExtra, devtools, rmarkdown, knitr
+VignetteBuilder: knitr  
+Encoding: UTF-8
+LazyData: true
+URL: https://www.data-pulse.com/dev_site/covid19/
+RoxygenNote: 6.1.1

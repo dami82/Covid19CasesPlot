@@ -1,0 +1,109 @@
+---
+title: "Visualize COVID-19 Tends"
+author: "Damiano Fantini"
+date: "`r Sys.Date()`"
+output: html_document
+vignette: >
+  %\VignetteIndexEntry{Visualize COVID-19 Tends}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+  %\VignetteDepends{Covid19CasesPlot}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, results = "asis", fig.align = "center", fig.width = 10, fig.height = 14)
+```
+
+Covid19DataPlot is an R library aimed at retrieving and visualizing day-by-day COVID-19 data for world countries and US-states. This vignette is illustrating how to use `Covid19DataPlot` to visualize COVID-19 data obtained from the John Hopkins University Data Repository on GitHub.
+
+### Install the library from GitHub.
+
+The `Covid19DataPlot` R library is an open-source software hosted on GitHub (<https://github.com/dami82/Covid19CasesPlot>). To install it, you can use `devtools`.
+
+```{r eval=FALSE}
+library(devtools)
+devtools::install_github(repo = "dami82/Covid19CasesPlot", build_opts = NULL)
+```
+
+### Use the library
+
+**Load the library**.
+
+```{r eval=TRUE}
+# Load Covid19DataPlot
+library(Covid19CasesPlot)
+
+# Load some other useful libraries 
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+```
+
+
+**Fetch latest data from the JHU Repo**.
+
+```{r}
+# Global data
+x1 <- fetch_latest_covid19_data(US.only = FALSE)
+
+# US data
+x2 <- fetch_latest_covid19_data(US.only = TRUE)
+```
+
+
+**Get info about dates and/or geo areas**.
+
+```{r}
+# Dates
+get_available_dates(x1)
+
+# Dates
+get_available_geo_areas(x2) %>% utils::head()
+```
+
+**Plot COVID-19 data from a list of Countries of interest**.
+
+```{r}
+# Build Country Plots
+p1 <- plot_covid19_data(covid19.data = x1, geo.area = "Italy", 
+                        y.limit = 16000, dth.scale.k = 4)
+p2 <- plot_covid19_data(covid19.data = x1, geo.area = "France", 
+                        y.limit = 16000, dth.scale.k = 4) 
+p3 <- plot_covid19_data(covid19.data = x1, geo.area = "US", 
+                        y.limit = 16000, dth.scale.k = 4) 
+p4 <- plot_covid19_data(covid19.data = x1, geo.area = "Spain", 
+                        y.limit = 16000, dth.scale.k = 4) 
+p5 <- plot_covid19_data(covid19.data = x1, geo.area = "Germany", 
+                        y.limit = 16000, dth.scale.k = 4)
+p6 <- plot_covid19_data(covid19.data = x1, geo.area = "United Kingdom", 
+                        y.limit = 16000, dth.scale.k = 4) 
+
+# Put together, visualize
+grid.arrange(p1, p4, p2, p5, p3, p6, ncol = 2)
+```
+
+
+**Plot COVID-19 data from a list of US-states of interest**.
+
+```{r}
+# Build US-states Plots
+pu1 <- plot_covid19_data(covid19.data = x2, geo.area = "Illinois", dth.scale.k = 3)
+pu2 <- plot_covid19_data(covid19.data = x2, geo.area = "Michigan", dth.scale.k = 3)
+pu3 <- plot_covid19_data(covid19.data = x2, geo.area = "California", dth.scale.k = 3)
+pu4 <- plot_covid19_data(covid19.data = x2, geo.area = "New York", dth.scale.k = 3) 
+pu5 <- plot_covid19_data(covid19.data = x2, geo.area = "New Jersey", dth.scale.k = 3) 
+pu6 <- plot_covid19_data(covid19.data = x2, geo.area = "Massachusetts", dth.scale.k = 3) 
+
+# Put together, visualize
+grid.arrange(pu1, pu2, pu3, pu4, pu5, pu6, ncol = 2)
+```
+
+More info are available at:
+
+- **Day-by-day COVID-19 Patterns**: <https://www.data-pulse.com/dev_site/covid19/>
+
+- **GitHub (R lib)**: <https://github.com/dami82/Covid19CasesPlot>
+
+- **JHU COVID-19 data**: <https://systems.jhu.edu/research/public-health/ncov/>
+
+
