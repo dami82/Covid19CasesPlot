@@ -196,12 +196,12 @@ plot_covid19_data <- function(covid19.data,
   ycsmx <- yy[yy$day == max(yy$day) & yy$COVID19 == "new.cases",]$counts
   ydtmx <- yy[yy$day == max(yy$day) & yy$COVID19 == "deaths",]$counts
   xmx <- max(yy$day)
-
+  
   # Rearrange deaths scales
   max.nc <- quantile(yy$counts[yy$COVID19 == "new.cases"], probs = 0.925, na.rm = TRUE)
   max.dn <- quantile(yy$counts[yy$COVID19 == "deaths"], probs = 0.925, na.rm = TRUE)
   
-  my.k <- ceiling((max.nc - 0.45 * max.nc) / max.dn )
+  my.k <- ceiling((max.nc - 0.66 * max.nc) / max.dn )
   if (!is.null(dth.scale.k) || is.numeric(dth.scale.k)) {
     my.k <- dth.scale.k
   }
@@ -232,6 +232,9 @@ plot_covid19_data <- function(covid19.data,
   xbrk.i <- c(xbrk.i, dtxxx$i[dtxxx$day == 1])
   xbrk.i <- sort(unique(xbrk.i))
   
+  # last day 2
+  ydtmx2 <- yy[yy$day == max(yy$day) & yy$COVID19 == "deaths",]$counts
+  
   plt1 <- suppressWarnings(
     suppressMessages(
       ggplot2::ggplot(yy, 
@@ -240,8 +243,13 @@ plot_covid19_data <- function(covid19.data,
         ggplot2::scale_x_continuous(name = "", breaks = xbrk.i, 
                                     labels = dtxxx$fdat[dtxxx$i %in% xbrk.i], 
                                     limits = c(1, (xmx + 4))) +
-        ggplot2::scale_y_continuous(name = "New Cases per day", limits = c(0, y.limit),
+        
+        ggplot2::scale_y_continuous(name = "New Cases per day", 
+                                    limits = c(0, max(y.limit, max(yy$counts, na.rm = TRUE))),
                                     sec.axis = ggplot2::sec_axis(~./my.k, name = "Deaths per day")) +
+        
+        ggplot2::coord_cartesian(ylim = c(0, y.limit)) +
+        
         ggplot2::scale_color_manual(values = c("#ff7f00", "#386cb0")) +
         ggplot2::ggtitle(label = paste0("COVID19 in ", geo.area)) +
         ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
@@ -250,7 +258,7 @@ plot_covid19_data <- function(covid19.data,
                        axis.text.x = ggplot2::element_text(angle = 90, hjust = 0, vjust = 0.5))
     )
   )
-    
+  
   plt1 <-  plt1 + 
     ggplot2::annotate(geom = 'segment' , x=xmx, xend = Inf, y = ydtmx2, yend = ydtmx2, 
                       size = 0.45, alpha = 0.9, color = "#386cb0", linetype="dotted") +
@@ -266,7 +274,7 @@ plot_covid19_data <- function(covid19.data,
                    axis.text.y.left =  ggplot2::element_text(color = "#de740b"),
                    axis.title.y.right  = ggplot2::element_text(color = "#235597"), 
                    axis.text.y.right =  ggplot2::element_text(color = "#235597"))
-       
+  
   return(plt1)
 }
 
