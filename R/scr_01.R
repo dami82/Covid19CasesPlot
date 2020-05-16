@@ -216,6 +216,8 @@ plot_covid19_data <- function(covid19.data,
     y.limit <- 1.15 * as.numeric(quantile(yy$counts, probs = 0.95, na.rm = TRUE))
     i <- min(which(yLims > y.limit), na.rm = TRUE)
     y.limit <- yLims[i]
+    tmp.y.limit <- 1.2 * as.numeric(ycsmx)
+    y.limit <- max(c(y.limit, tmp.y.limit ), na.rm = TRUE)
   }
   
   dtx <- colnames(gl_cse_df)
