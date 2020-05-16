@@ -192,6 +192,11 @@ plot_covid19_data <- function(covid19.data,
                        variable.name = "COVID19", 
                        value.name = "counts")
   
+  # last day
+  ycsmx <- yy[yy$day == max(yy$day) & yy$COVID19 == "new.cases",]$counts
+  ydtmx <- yy[yy$day == max(yy$day) & yy$COVID19 == "deaths",]$counts
+  xmx <- max(yy$day)
+
   # Rearrange deaths scales
   max.nc <- quantile(yy$counts[yy$COVID19 == "new.cases"], probs = 0.925, na.rm = TRUE)
   max.dn <- quantile(yy$counts[yy$COVID19 == "deaths"], probs = 0.925, na.rm = TRUE)
@@ -232,7 +237,9 @@ plot_covid19_data <- function(covid19.data,
       ggplot2::ggplot(yy, 
                       ggplot2::aes(x = day, y = counts, color = COVID19)) +
         ggplot2::geom_point(size  = 2)+ ggplot2::geom_smooth(method = "loess", span = 0.3, na.rm = TRUE) +
-        ggplot2::scale_x_continuous(name = "", breaks = xbrk.i, labels = dtxxx$fdat[dtxxx$i %in% xbrk.i]) +
+        ggplot2::scale_x_continuous(name = "", breaks = xbrk.i, 
+                                    labels = dtxxx$fdat[dtxxx$i %in% xbrk.i], 
+                                    limits = c(1, (xmx + 4))) +
         ggplot2::scale_y_continuous(name = "New Cases per day", limits = c(0, y.limit),
                                     sec.axis = ggplot2::sec_axis(~./my.k, name = "Deaths per day")) +
         ggplot2::scale_color_manual(values = c("#ff7f00", "#386cb0")) +
@@ -243,7 +250,23 @@ plot_covid19_data <- function(covid19.data,
                        axis.text.x = ggplot2::element_text(angle = 90, hjust = 0, vjust = 0.5))
     )
   )
-
+    
+  plt1 <-  plt1 + 
+    ggplot2::annotate(geom = 'segment' , x=xmx, xend = Inf, y = ydtmx2, yend = ydtmx2, 
+                      size = 0.45, alpha = 0.9, color = "#386cb0", linetype="dotted") +
+    ggplot2::annotate(geom = 'segment' , x=xmx, xend = -Inf, y = ycsmx, yend = ycsmx, 
+                      size = 0.45, alpha = 0.9, color = "#ff7f00", linetype="dotted") +
+    ggplot2::annotate(geom = 'text' , x=-Inf, y = ycsmx, hjust = -0.25, vjust = -0.25, 
+                      size = 3.5, fontface = "bold.italic", alpha = 0.9, color = "#de740b", 
+                      label = ycsmx) +
+    ggplot2::annotate(geom = 'text' , x=+Inf, y = ydtmx2, hjust = 1.25, vjust = -0.25, 
+                      size = 3.5, fontface = "bold.italic", alpha = 0.9, color = "#235597", 
+                      label = ydtmx) + 
+    ggplot2::theme(axis.title.y.left = ggplot2::element_text(color = "#de740b"), 
+                   axis.text.y.left =  ggplot2::element_text(color = "#de740b"),
+                   axis.title.y.right  = ggplot2::element_text(color = "#235597"), 
+                   axis.text.y.right =  ggplot2::element_text(color = "#235597"))
+       
   return(plt1)
 }
 
